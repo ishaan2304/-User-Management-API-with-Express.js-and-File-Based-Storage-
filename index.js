@@ -55,10 +55,15 @@ app.route("/api/users/:id")
 
 // Route: Adding a new user
 app.post("/api/users", (req, res) => {
-    const body = req.body; // Accessing the request body
+    const body = req.body; 
+    //handling missing values while adding a new user
+    if(!body.first_name || !body.last_name || !body.gender || !body.email || !body.job_title){
+        res.status(400).json({msg:'Enter all the values'});
+    }
+    // Accessing the request body
     users.push({ ...body, id: users.length }); // Adding the new user with an incremented ID
     fs.writeFileSync("./MOCK_DATA.json", JSON.stringify(users), (err, data) => {
-        return res.json({ status: pending }); // Placeholder status response
+        return res.status(201).json({ status: "success" }); // Placeholder status response
     });
 });
 

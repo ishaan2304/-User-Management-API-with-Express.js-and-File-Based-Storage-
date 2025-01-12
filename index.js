@@ -53,7 +53,7 @@ app.route("/api/users/:id")
         return res.json({ status: "pending" }); // Placeholder response for delete
     });
 
-// Route: Add a new user
+// Route: Adding a new user
 app.post("/api/users", (req, res) => {
     const body = req.body; // Accessing the request body
     users.push({ ...body, id: users.length }); // Adding the new user with an incremented ID

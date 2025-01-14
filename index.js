@@ -1,15 +1,15 @@
 // Import necessary modules
-const express = require("express"); // Express framework for building the server
-const users = require("./MOCK_DATA.json"); // Importing mock user data
-const app = express(); // Initializing the Express app
-const port = 7000; // Defining the server's port
-const fs = require("fs"); // File system module for reading/writing files
+const express = require("express");   // Express framework for building the server
+const users = require("./MOCK_DATA.json");   // Importing mock user data
+const app = express();   // Initializing the Express app
+const port = 7000;    // Defining the server's port
+const fs = require("fs");   // File system module for reading/writing files
 
 // Middleware 1: Adds a custom property to the request and logs a message
 app.use((req, res, next) => {
     console.log("Hello from middleware 1");
-    req.username = "piyush sir"; // Adding a custom property to the request object
-    next(); // Passing control to the next middleware/route handler
+    req.username = "piyush sir";   // Adding a custom property to the request object
+    next();   // Passing control to the next middleware/route handler
 });
 
 // Middleware 2: Logs API requests to a file (`log.txt`)

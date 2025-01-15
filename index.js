@@ -4,7 +4,36 @@ const users = require("./MOCK_DATA.json");   // Importing mock user data
 const app = express();   // Initializing the Express app
 const port = 7000;    // Defining the server's port
 const fs = require("fs");   // File system module for reading/writing files
-
+const mongoose=require("mongoose"); //connection
+mongoose
+.connect("mongodb://127.0.0.1:27017/users")
+.then(()=>console.log("MongoDb connected"))
+.catch((err)=>console.log("Mongo Error",err));
+//schema
+const userSchema= new mongoose.Schema({
+    firstName:{
+        type:String,
+        require:true,
+    },
+        lastName:{
+        type:String,
+        require:true,
+    },
+    jobTitle:{
+        type:String,
+    },
+    email:{
+        type:String,
+        require:true,
+        unique:true
+    },
+    gender:{
+        type:String,
+    },
+},
+{timestamps:true}
+)
+const User =mongoose.model("user",userSchema)
 // Middleware 1: Adds a custom property to the request and logs a message
 app.use((req, res, next) => {
     console.log("Hello from middleware 1");
@@ -39,10 +68,11 @@ app.use(express.urlencoded({ extended: false }));
 // Routes for specific user operations (using route chaining)
 app.route("/api/users/:id")
     // Get a user by ID
-    .get((req, res) => {
-        const id = Number(req.params.id); // Extracting the user ID from the route parameter
-        const user = users.find((user) => user.id === id); // Finding the user with the given ID
-        return res.json(user); // Sending the found user as a JSON response
+    .get(async(req, res) => {
+     const user=await User.findById(req.params.id);
+        if(!user){ return res.status(404).json({error:"user not found});
+                                               }
+                                               return res.json(user);
     })
     // Placeholder for updating a user by ID
     .put((req, res) => {
@@ -54,17 +84,21 @@ app.route("/api/users/:id")
     });
 
 // Route: Adding a new user
-app.post("/api/users", (req, res) => {
+app.post("/api/users", async(req, res) => {
     const body = req.body; 
     //handling missing values while adding a new user
     if(!body.first_name || !body.last_name || !body.gender || !body.email || !body.job_title){
         res.status(400).json({msg:'Enter all the values'});
     }
-    // Accessing the request body
-    users.push({ ...body, id: users.length }); // Adding the new user with an incremented ID
-    fs.writeFileSync("./MOCK_DATA.json", JSON.stringify(users), (err, data) => {
-        return res.status(201).json({ status: "success" }); // Placeholder status response
-    });
+    const result=await User.create({
+    firstName:body.first_name,
+    lastName:body.last_name,
+    email:body.email,
+    gender:body.gender,
+    jobTitle:body.job_title,
+  });
+    console.log("result",result);
+    return res.status(201).json({ status: "success" }); // Placeholder status response
 });
 
 // Start the server

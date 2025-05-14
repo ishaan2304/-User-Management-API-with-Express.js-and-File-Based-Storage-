@@ -67,7 +67,6 @@ Body: {
 ```bash
 GET http://localhost:7000/api/users/1
 ```
-
 ## Dependencies
 • express: Web framework for Node.js  
 • fs: File system module for logging and data persistence
